@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "keymap_swedish.h"
 
 extern keymap_config_t keymap_config;
 
@@ -7,14 +8,18 @@ extern keymap_config_t keymap_config;
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
 #define _QWERTY 0
-#define _SYMB 1
-#define _NAV 2
-#define _ADJUST 3
+#define _COLEMAK 1
+#define _SYMB 2
+#define _NAV 3
+#define _NUMP 4
+#define _ADJUST 5
 
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
+  COLEMAK,
   SYMB,
   NAV,
+  NUMP,
   ADJUST,
 };
 
@@ -23,6 +28,7 @@ enum custom_keycodes {
 #define SYM_L   MO(_SYMB)
 
 #define NAV_L   MO(_NAV)
+#define NUMP_L   MO(_NUMP)
 #define ADJ_L   MO(_ADJUST)
 
 #define KC_ALAS LALT_T(KC_PAST)
@@ -35,6 +41,8 @@ enum custom_keycodes {
 #define KC_ADEN LT(_ADJUST, KC_END)
 #define KC_ADPU LT(_ADJUST, KC_PGUP)
 
+
+// TODO: Fix keybinds to switch between Colemak and Qwerty
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_QWERTY] = LAYOUT(
@@ -47,11 +55,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┐       ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┤
      KC_LSFT ,KC_Z    ,KC_X    ,KC_C    ,KC_V    ,KC_B    ,KC_PGUP ,KC_PGDN ,        KC_HOME ,KC_END  ,KC_N    ,KC_M    ,KC_COMM ,KC_DOT  ,KC_SLSH ,KC_RSFT ,
   //├────────┼────────┼────────┼────────┼────┬───┴────┬───┼────────┼────────┤       ├────────┼────────┼───┬────┴───┬────┼────────┼────────┼────────┼────────┤
-     KC_LCTL ,KC_LGUI ,NAV_L   ,KC_LALT ,     SYM_L   ,    KC_SPC  ,KC_DEL  ,        KC_ENT  ,KC_SPC  ,    SYM_L   ,     KC_RALT ,NAV_L   ,ADJ_L   ,KC_RCTL
+     KC_LCTL ,KC_LGUI ,NUMP_L  ,KC_LALT ,     NAV_L   ,    KC_SPC  ,KC_ENT  ,        KC_ENT  ,KC_SPC  ,    SYM_L   ,     KC_RALT ,NAV_L   ,ADJ_L   ,KC_RCTL
+  //└────────┴────────┴────────┴────────┘    └────────┘   └────────┴────────┘       └────────┴────────┘   └────────┘    └────────┴────────┴────────┴────────┘
+  ),
+
+  [_COLEMAK] = LAYOUT(
+  //┌────────┬────────┬────────┬────────┬────────┬────────┐                                           ┌────────┬────────┬────────┬────────┬────────┬────────┐
+     KC_GRAVE,KC_1    ,KC_2    ,KC_3    ,KC_4    ,KC_5    ,                                            KC_6    ,KC_7    ,KC_8    ,KC_9    ,KC_0    ,NO_PLUS ,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐                         ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     KC_TAB  ,KC_Q    ,KC_W    ,KC_F    ,KC_P    ,KC_G    ,KC_DEL  ,                          KC_BSPC ,KC_J    ,KC_L    ,KC_U    ,KC_Y    ,NO_OSLH ,NO_AA   ,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┤                         ├────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     KC_CTES ,KC_A    ,KC_R    ,KC_S    ,KC_T    ,KC_D    ,KC_LBRC ,                          KC_RBRC ,KC_H    ,KC_N    ,KC_E    ,KC_I    ,KC_O    ,NO_AE   ,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┐       ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     KC_LSFT ,KC_Z    ,KC_X    ,KC_C    ,KC_V    ,KC_B    ,KC_PGUP ,KC_PGDN ,        KC_HOME ,KC_END  ,KC_K    ,KC_M    ,KC_COMM ,KC_DOT  ,NO_MINS ,KC_RSFT ,
+  //├────────┼────────┼────────┼────────┼────┬───┴────┬───┼────────┼────────┤       ├────────┼────────┼───┬────┴───┬────┼────────┼────────┼────────┼────────┤
+     KC_LCTL ,KC_LGUI ,NUMP_L  ,KC_LALT ,     NAV_L   ,    KC_SPC  ,KC_ENT  ,        KC_ENT  ,KC_SPC  ,    SYM_L   ,     KC_RALT ,NAV_L   ,ADJ_L   ,KC_RCTL
   //└────────┴────────┴────────┴────────┘    └────────┘   └────────┴────────┘       └────────┴────────┘   └────────┘    └────────┴────────┴────────┴────────┘
   ),
 
   [_SYMB] = LAYOUT(
+  //┌────────┬────────┬────────┬────────┬────────┬────────┐                                           ┌────────┬────────┬────────┬────────┬────────┬────────┐
+     _______ ,KC_F1   ,KC_F2   ,KC_F3   ,KC_F4   ,KC_F5   ,                                            KC_F6   ,KC_F7   ,KC_F8   ,KC_F9   ,KC_F10  ,XXXXXXX ,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐                         ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     _______ ,NO_PIPE ,NO_APOS ,KC_HASH ,NO_DLR  ,KC_PERC,_______ ,                          _______ ,NO_CIRC ,NO_AMPR ,NO_ASTR ,NO_ACUT ,NO_GRV  ,NO_TILD ,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┤                         ├────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     _______ ,KC_EXLM ,NO_QUO2 ,NO_SCLN ,NO_COLN ,NO_LESS ,_______ ,                          _______ ,NO_GRTR ,NO_SLSH ,NO_BSLS ,NO_EQL  ,NO_PLUS ,XXXXXXX ,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┐       ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     _______ ,XXXXXXX ,XXXXXXX ,KC_LPRN ,NO_LBRC ,NO_LCBR ,_______ ,_______ ,        _______ ,_______ ,NO_RCBR ,NO_RBRC ,KC_RPRN ,NO_UNDS ,NO_QUES ,_______ ,
+  //├────────┼────────┼────────┼────────┼────┬───┴────┬───┼────────┼────────┤       ├────────┼────────┼───┬────┴───┬────┼────────┼────────┼────────┼────────┤
+     _______ ,_______ ,_______ ,_______ ,     _______ ,    KC_BSPC ,_______ ,        _______ ,KC_BSPC ,    XXXXXXX ,     _______ ,XXXXXXX ,XXXXXXX ,_______
+  //└────────┴────────┴────────┴────────┘    └────────┘   └────────┴────────┘       └────────┴────────┘   └────────┘    └────────┴────────┴────────┴────────┘
+  ),
+
+  [_NUMP] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                                           ┌────────┬────────┬────────┬────────┬────────┬────────┐
      _______ ,KC_F1   ,KC_F2   ,KC_F3   ,KC_F4   ,KC_F5   ,                                            KC_F6   ,KC_F7   ,KC_F8   ,KC_F9   ,KC_F10  ,XXXXXXX ,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐                         ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
@@ -67,15 +103,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_NAV] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                                           ┌────────┬────────┬────────┬────────┬────────┬────────┐
-     _______ ,_______ ,_______ ,_______ ,_______ ,_______ ,                                            _______ ,_______ ,_______ ,_______ ,_______ ,_______ ,
+     _______ ,KC_F1   ,KC_F2   ,KC_F3   ,KC_F4   ,KC_F5   ,                                            KC_F6   ,KC_F7   ,KC_F8   ,KC_F9   ,KC_F10  ,XXXXXXX ,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐                         ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     XXXXXXX ,XXXXXXX ,KC_UP   ,XXXXXXX ,KC_WH_U ,XXXXXXX ,_______ ,                          _______ ,XXXXXXX ,XXXXXXX ,KC_PGUP ,XXXXXXX ,XXXXXXX ,XXXXXXX ,
+     _______ ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,_______ ,                          _______ ,XXXXXXX ,XXXXXXX ,KC_PGUP ,XXXXXXX ,XXXXXXX ,XXXXXXX ,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┤                         ├────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     XXXXXXX ,KC_LEFT ,KC_DOWN ,KC_RIGHT,KC_WH_D ,KC_PGDN ,_______ ,                          _______ ,KC_HOME ,KC_DOWN ,KC_END  ,KC_INS  ,XXXXXXX ,XXXXXXX ,
+     _______ ,KC_LEFT ,KC_UP   ,KC_DOWN ,KC_RIGHT,KC_PGDN ,_______ ,                          _______ ,KC_HOME ,KC_DOWN ,KC_END  ,KC_INS  ,XXXXXXX ,XXXXXXX ,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┐       ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,_______ ,_______ ,        _______ ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,
+     _______ ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,_______ ,_______ ,        _______ ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,
   //├────────┼────────┼────────┼────────┼────┬───┴────┬───┼────────┼────────┤       ├────────┼────────┼───┬────┴───┬────┼────────┼────────┼────────┼────────┤
-     XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX ,     XXXXXXX ,    XXXXXXX ,_______ ,        _______ ,_______ ,    XXXXXXX ,     XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX
+     _______ ,_______ ,_______ ,_______ ,     XXXXXXX ,    XXXXXXX ,_______ ,        _______ ,_______ ,    XXXXXXX ,     XXXXXXX ,XXXXXXX ,XXXXXXX ,XXXXXXX
   //└────────┴────────┴────────┴────────┘    └────────┘   └────────┴────────┘       └────────┴────────┘   └────────┘    └────────┴────────┴────────┴────────┘
   ),
 
