@@ -21,6 +21,7 @@
       "terminal.integrated.shellArgs.windows": [
           "--login"
       ],
-      "terminal.integrated.cursorStyle": "line"
+	"terminal.integrated.cursorStyle": "line",
+	"git.ignoreLimitWarning": true
   }
 }
