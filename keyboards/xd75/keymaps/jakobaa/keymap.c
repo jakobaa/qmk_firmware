@@ -27,6 +27,9 @@
 #define TogQW TG(_QWERTY)
 #define TogCL TG(_COLEMAK)
 
+#define TogLR TG(_LOWER)
+#define TogRS TG(_RAISE)
+
 
 #define KC_CTES LCTL_T(KC_ESC)
 
@@ -35,6 +38,31 @@ enum custom_keycodes {
   QMKBEST = SAFE_RANGE,
   QMKURL
 };
+
+
+// Unicode ÅÄÖ input
+enum unicode_names {
+    AAU,
+    AAL,
+    AEU,
+    AEL,
+    OEU,
+    OEL,
+};
+
+const uint32_t PROGMEM unicode_map[] = {
+    [AAU]  = 0x00C5, // Å
+    [AAL]  = 0x00E5, // å
+    [AEU]  = 0x00C4, // Ä
+    [AEL]  = 0x00E4, // ä
+    [OEU]  = 0x00D6, // Ö
+    [OEL]  = 0x00F6, // ö
+};
+
+#define KC_AA XP(AAL, AAU)
+#define KC_AE XP(AEL, AEU)
+#define KC_OE XP(OEL, OEU)
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -53,11 +81,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
   [_COLEMAK] = LAYOUT_ortho_5x15( /* Colemak */
-    TogQW,   KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC, KC_MINS, KC_GRV,  RESET,
-    KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, KC_LBRC,  KC_LBRC, KC_BSLS, KC_RBRC,
-    KC_CTES, KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT,  KC_HOME, KC_DEL,  KC_PGUP,
+    TogQW,   KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC, UC_M_LN, UC_M_WC, RESET,
+    KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_OE,   KC_AA,   KC_LBRC, KC_BSLS, KC_RBRC,
+    KC_CTES, KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    KC_AE,   KC_HOME, KC_DEL,  KC_PGUP,
     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, KC_END,  KC_UP,   KC_PGDN,
-    KC_LCTL, KC_LGUI, KC_LALT, KC_LALT, MO(_FN), KC_ENT,  KC_SPC,  MO(_FN), KC_RALT, KC_RGUI, KC_RGUI, KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
+    KC_LCTL, KC_LGUI, KC_LALT, KC_LALT, TogLR,   KC_ENT,  KC_SPC,  TogRS,   KC_RALT, KC_RGUI, KC_RGUI, KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
   ),
 
 
