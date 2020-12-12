@@ -1,0 +1,322 @@
+#+Title: Jakob's Literate QMK Config
+
+This is my qmk firmware for my keyboard. I grew tired of organizing the keycode
+array in plain text so I made it a literate .org file. I've never done this
+before, so bear with me.
+
+* Layers
+
+#+BEGIN_COMMENT
+#+NAME: empty-layer
+| <6>    | <6>    | <6>    | <6>    | <6>    | <6>    | <6>    | <6>    | <6>    | <6>    | <6>    | <6>    |
+|--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
+| -      | -      | -      | -      | -      | -      | -      | -      | -      | -      | -      | -      |
+| -      | -      | -      | -      | -      | -      | -      | -      | -      | -      | -      | -      |
+| -      | -      | -      | -      | -      | -      | -      | -      | -      | -      | -      | -      |
+| -      | -      | -      | -      | -      | -      | -      | -      | -      | -      | -      | -      |
+|--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
+#+END_COMMENT
+
+** Qwerty
+
+#+NAME: qwerty-layer
+|------+------+------+------+--------+-----+-----+--------+------+------+------+------|
+| TAB  | Q    | W    | F    | P      | G   | J   | L      | U    | Y    | OEO  | AA   |
+| CTES | A    | R    | S    | T      | D   | H   | N      | E    | I    | O    | AE   |
+| LSFT | Z    | X    | C    | V      | B   | K   | M      | COMM | DOT  | SLSH | ENT  |
+| LCTL | LGUI | LGUI | LALT | /LOWER | ENT | SPC | /RAISE | LEFT | DOWN | UP   | RGHT |
+|------+------+------+------+--------+-----+-----+--------+------+------+------+------|
+
+
+** Colemak
+
+#+NAME: colemak-layer
+|------+------+------+------+--------+-----+-----+--------+------+------+------+------|
+| TAB  | Q    | W    | F    | P      | G   | J   | L      | U    | Y    | OEO  | AA   |
+| CTES | A    | R    | S    | T      | D   | H   | N      | E    | I    | O    | AE   |
+| LSFT | Z    | X    | C    | V      | B   | K   | M      | COMM | DOT  | SLSH | ENT  |
+| LCTL | LGUI | LGUI | LALT | /LOWER | ENT | SPC | /RAISE | LEFT | DOWN | UP   | RGHT |
+|------+------+------+------+--------+-----+-----+--------+------+------+------+------|
+
+
+*** Optional top layer
+
+| GRV | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 | BSPC |
+
+*** Extra triple columns
+|---+---+---|
+|   |   |   |
+|   |   |   |
+|   |   |   |
+|   |   |   |
+|   |   |   |
+|   |   |   |
+|---+---+---|
+** Lower
+#+NAME: lower-layer
+|------+------+------+------+------+------+------+------+------+------+------+------|
+| TILD | EXLM | AT   | HASH | DLR  | PERC | CIRC | AMPR | ASTR | LPRN | RPRN | BSPC |
+| DEL  | LEFT | DOWN | UP   | RGHT | F5   | F6   | UNDS | PLUS | LCBR | RCBR | PIPE |
+| --   | F7   | F8   | F9   | F10  | F11  | F12  | SCLN | COLN | HOME | END  | --   |
+| --   | --   | --   | --   | --   | --   | --   | --   | MNXT | VOLD | VOLU | MPLY |
+|------+------+------+------+------+------+------+------+------+------+------+------|
+
+** Raise
+#+NAME: raise-layer
+|-----+----+----+----+-----+-----+-----+------+------+------+------+------|
+| GRV | 1  | 2  | 3  | 4   | 5   | 6   | 7    | 8    | 9    | 0    | BSPC |
+| DEL | F1 | F2 | F3 | F4  | F5  | F6  | MINS | EQL  | LBRC | RBRC | BSLS |
+| --  | F7 | F8 | F9 | F10 | F11 | F12 | NUHS | NUBS | PGUP | PGDN | --   |
+| --  | -- | -- | -- | --  | --  | --  | --   | MNXT | --   | --   | MPLY |
+|-----+----+----+----+-----+-----+-----+------+------+------+------+------|
+
+** Adjust
+#+NAME: adjust-layer
+|----+--------+--------+---------+---------+---------+---------+---------+----------+---------+---------+--------|
+| -- | RESET  | DEBUG  | RGB_TOG | RGB_MOD | RGB_HUI | RGB_HUD | RGB_SAI | RGB_SAD  | RGB_VAI | RGB_VAD | KC_DEL |
+| -- | --     | MU_MOD | AU_ON   | AU_OFF  | AG_NORM | AG_SWAP | QWERTY  | COLEMAK  | UC_M_LN | UC_M_WC | --     |
+| -- | MUV_DE | MUV_IN | MU_ON   | MU_OFF  | MI_ON   | MI_OFF  | TERM_ON | TERM_OFF | --      | --      | --     |
+| -- | --     | --     | --      | --      | --      | --      | --      | --       | --      | --      | --     |
+|----+--------+--------+---------+---------+---------+---------+---------+----------+---------+---------+--------|
+
+* Keymap Conversion in Python
+
+To input boolean values to other org-babel blocks...
+#+NAME:true
+#+BEGIN_SRC python :noweb yes
+return true
+#+END_SRC
+
+#+NAME:false
+#+BEGIN_SRC python :noweb yes
+return false
+#+END_SRC
+
+  This python can convert that table into the array needed for the
+  keymap file. It simply prepends every key with "KC_". I used to use
+  a dictionary to convert some keys from the table into qmk keycodes,
+  but the double convertion was unneccessary so I just prepended all
+  my macros with KC and moved all the implementation to the
+  `process-user-input` function.
+
+  #+NAME:layer-to-array
+  #+BEGIN_SRC python :var keys=adjust-layer prependKC=true :tangle no
+    results = ''
+
+    def convertToKeyCode(keyName):
+      if keyName == '--':
+	keyName = '______'
+      elif prependKC and keyName[0] != '/':
+	keyName = 'KC_' + keyName
+      elif keyName[0] == '/':
+	keyName = keyName[1:]
+      return keyName.ljust(6)
+
+    qmkrows = []
+
+    for row in keys:
+      currentRow = []
+      for keyName in row:
+	currentRow.append(convertToKeyCode(keyName))
+      qmkrows.append(', '.join(currentRow))
+
+      if row != 3:
+	results += '\n'
+
+    return ', \n'.join(qmkrows)
+  #+END_SRC
+
+* keymap.c
+  :PROPERTIES:
+  :header-args:c:    :tangle keymapgen.c
+  :END:
+  Now that we laid out our layout, lets lay out our keymap file.
+
+** Headers
+
+   #+BEGIN_SRC C :noweb yes
+#include QMK_KEYBOARD_H
+
+extern keymap_config_t keymap_config;
+
+   #+END_SRC
+
+** Import Key table
+
+   #+BEGIN_SRC C :noweb yes
+enum planck_layers {
+  _QWERTY,
+  _COLEMAK,
+  _LOWER,
+  _RAISE,
+  _ADJUST
+};
+
+enum planck_keycodes {
+  QWERTY = SAFE_RANGE,
+  COLEMAK,
+  BACKLIT,
+  EXT_PLV
+};
+
+// Unicode ÅÄÖ input
+enum unicode_names {
+    AAU,
+    AAL,
+    AEU,
+    AEL,
+    OEU,
+    OEL,
+};
+
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+
+   #+END_SRC
+
+** Keymaps
+
+   #+BEGIN_SRC C :noweb yes 
+[_QWERTY] = LAYOUT_planck_grid(
+     <<layer-to-array(qwerty-layer, "true")>>
+),
+[_COLEMAK] = LAYOUT_planck_grid(
+<<layer-to-array(colemak-layer, true)>>
+),
+[_LOWER] = LAYOUT_planck_grid(
+<<layer-to-array(lower-layer, true)>>
+),
+[_RAISE] = LAYOUT_planck_grid(
+<<layer-to-array(raise-layer, true)>>
+),
+[_ADJUST] = LAYOUT_planck_grid(
+<<layer-to-array(adjust-layer, false)>>
+)
+};
+
+   #+END_SRC
+
+** Process User Input
+
+   #+BEGIN_SRC C :noweb yes
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+   #+END_SRC
+
+*** Layouts
+
+    Set Colemak layout
+    #+BEGIN_SRC C :noweb yes
+ case KC_COLEMAK:
+ if (record->event.pressed) {
+     set_single_persistent_default_layer(_COLEMAK);
+ }
+ return true;
+ break;
+    #+END_SRC
+
+    Set Qwerty layout.
+    #+BEGIN_SRC C :noweb yes
+ case KC_QWERTY:
+ if (record->event.pressed) {
+     set_single_persistent_default_layer(_QWERTY);
+ }
+ return true;
+ break;
+    #+END_SRC
+
+    Set Lower layout.
+    #+BEGIN_SRC C :noweb yes
+ case KC_LOWER:
+ if (record->event.pressed) {
+     set_single_persistent_default_layer(_LOWER);
+ }
+ return true;
+ break;
+    #+END_SRC
+
+    Set Raise layout.
+    #+BEGIN_SRC C :noweb yes
+ case KC_RAISE:
+ if (record->event.pressed) {
+     set_single_persistent_default_layer(_RAISE);
+ }
+ return true;
+ break;
+    #+END_SRC
+
+    Set Adjust layout.
+    #+BEGIN_SRC C :noweb yes
+ case KC_ADJUST:
+ if (record->event.pressed) {
+     set_single_persistent_default_layer(_ADJUST);
+ }
+ return true;
+ break;
+    #+END_SRC
+
+
+
+
+    #+BEGIN_SRC C :noweb yes
+ }
+ return true;
+ }
+    #+END_SRC
+
+#+BEGIN_SRC C :noweb yes
+
+
+bool muse_mode = false;
+uint8_t last_muse_note = 0;
+uint16_t muse_counter = 0;
+uint8_t muse_offset = 70;
+uint16_t muse_tempo = 50;
+
+
+// No rotary encoder yet
+/*
+void encoder_update(bool clockwise) {
+  if (muse_mode) {
+    if (IS_LAYER_ON(_RAISE)) {
+      if (clockwise) {
+        muse_offset++;
+      } else {
+        muse_offset--;
+      }
+    } else {
+      if (clockwise) {
+        muse_tempo+=1;
+      } else {
+        muse_tempo-=1;
+      }
+    }
+  } else {
+    if (clockwise) {
+      #ifdef MOUSEKEY_ENABLE
+        tap_code(KC_MS_WH_DOWN);
+      #else
+        tap_code(KC_PGDN);
+      #endif
+    } else {
+      #ifdef MOUSEKEY_ENABLE
+        tap_code(KC_MS_WH_UP);
+      #else
+        tap_code(KC_PGUP);
+      #endif
+    }
+  }
+}
+*/
+
+
+bool music_mask_user(uint16_t keycode) {
+  switch (keycode) {
+    case RAISE:
+    case LOWER:
+      return false;
+    default:
+      return true;
+  }
+}
+
+#+END_SRC
